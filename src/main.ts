@@ -1,44 +1,90 @@
 import * as THREE from 'three'
 import './style.css'
 
-// ==================================================
+// ======================================================
+// TYPES
+// ======================================================
+
+type DestinationId =
+  | 'aldebaran'
+  | 'hyades'
+  | 'pleiades'
+  | 'crab'
+
+type DestinationType =
+  | 'star'
+  | 'cluster'
+  | 'nebula'
+
+type DestinationData = {
+  id: DestinationId
+  name: string
+  subtitle: string
+  type: DestinationType
+
+  position: [number, number, number]
+
+  astronomicalText: string
+  personalText: string
+}
+
+type TaurusStarData = {
+  name: string
+  position: [number, number, number]
+  color: number
+  size: number
+}
+
+// ======================================================
 // SCENE
-// ==================================================
+// ======================================================
 
 const scene = new THREE.Scene()
 
-scene.background = new THREE.Color(0x020207)
+scene.background =
+  new THREE.Color(0x010106)
 
-
-// ==================================================
+// ======================================================
 // CAMERA
-// ==================================================
+// ======================================================
 
-const camera = new THREE.PerspectiveCamera(
-  60,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-)
+const camera =
+  new THREE.PerspectiveCamera(
+    58,
+    window.innerWidth /
+      window.innerHeight,
+    0.1,
+    1000
+  )
 
 const overviewCameraPosition =
-  new THREE.Vector3(0, 0, 8)
+  new THREE.Vector3(
+    0,
+    0,
+    9
+  )
 
 const detailCameraPosition =
-  new THREE.Vector3(0, 0, 4.6)
+  new THREE.Vector3(
+    0,
+    0,
+    4.8
+  )
 
 camera.position.copy(
   overviewCameraPosition
 )
 
-
-// ==================================================
+// ======================================================
 // RENDERER
-// ==================================================
+// ======================================================
 
-const renderer = new THREE.WebGLRenderer({
-  antialias: true
-})
+const renderer =
+  new THREE.WebGLRenderer({
+    antialias: true,
+    powerPreference:
+      'high-performance'
+  })
 
 renderer.setSize(
   window.innerWidth,
@@ -52,154 +98,319 @@ renderer.setPixelRatio(
   )
 )
 
+renderer.outputColorSpace =
+  THREE.SRGBColorSpace
+
 document.body.appendChild(
   renderer.domElement
 )
 
+// ======================================================
+// BACKGROUND STARFIELD
+// ======================================================
 
-// ==================================================
-// BACKGROUND STAR FIELD
-// ==================================================
+const backgroundStarCount = 3000
 
-const starCount = 2500
-
-const starPositions =
+const backgroundPositions =
   new Float32Array(
-    starCount * 3
+    backgroundStarCount * 3
   )
 
 for (
   let i = 0;
-  i < starCount;
+  i < backgroundStarCount;
   i++
 ) {
+  const index = i * 3
 
-  const index =
-    i * 3
+  backgroundPositions[index] =
+    (Math.random() - 0.5) *
+    120
 
-  starPositions[index] =
-    (Math.random() - 0.5) * 100
+  backgroundPositions[index + 1] =
+    (Math.random() - 0.5) *
+    120
 
-  starPositions[index + 1] =
-    (Math.random() - 0.5) * 100
-
-  starPositions[index + 2] =
-    (Math.random() - 0.5) * 100
+  backgroundPositions[index + 2] =
+    (Math.random() - 0.5) *
+    120
 }
 
-const starGeometry =
+const backgroundGeometry =
   new THREE.BufferGeometry()
 
-starGeometry.setAttribute(
+backgroundGeometry.setAttribute(
   'position',
   new THREE.BufferAttribute(
-    starPositions,
+    backgroundPositions,
     3
   )
 )
 
-const starMaterial =
+const backgroundMaterial =
   new THREE.PointsMaterial({
     color: 0xffffff,
-    size: 0.06,
+    size: 0.055,
+    transparent: true,
+    opacity: 0.9,
     sizeAttenuation: true
   })
 
 const starField =
   new THREE.Points(
-    starGeometry,
-    starMaterial
+    backgroundGeometry,
+    backgroundMaterial
   )
 
 scene.add(starField)
 
+// ======================================================
+// DESTINATION DATA
+// ======================================================
 
-// ==================================================
-// TAURUS DATA
-// ==================================================
+const destinations:
+  Record<
+    DestinationId,
+    DestinationData
+  > = {
+  aldebaran: {
+    id: 'aldebaran',
 
-type TaurusStarData = {
-  name: string
-  position: [number, number, number]
-  color: number
-  size: number
-  interactive?: boolean
+    name: 'Aldebaran',
+
+    subtitle:
+      'Alpha Tauri',
+
+    type: 'star',
+
+    position: [
+      1.65,
+      -0.15,
+      0
+    ],
+
+    astronomicalText:
+      'The brightest apparent star in Taurus. Aldebaran is an orange giant that visually marks one of the eyes of the constellation.',
+
+    personalText:
+      'Personal message about her eyes and the way her gaze feels will eventually appear here.'
+  },
+
+  hyades: {
+    id: 'hyades',
+
+    name: 'Hyades',
+
+    subtitle:
+      'Open star cluster',
+
+    type: 'cluster',
+
+    position: [
+      1.05,
+      -0.05,
+      -0.15
+    ],
+
+    astronomicalText:
+      'The Hyades form the prominent V-shaped group in the face of Taurus. Aldebaran appears in the same direction from Earth, although it is not actually a member of the cluster.',
+
+    personalText:
+      'Personal message about her intelligence, dedication and effort will eventually appear here.'
+  },
+
+  pleiades: {
+    id: 'pleiades',
+
+    name: 'Pleiades',
+
+    subtitle:
+      'Messier 45',
+
+    type: 'cluster',
+
+    position: [
+      3.05,
+      1.75,
+      -0.3
+    ],
+
+    astronomicalText:
+      'The Pleiades are a young open star cluster in Taurus, easily visible to the naked eye as a compact group of bright stars.',
+
+    personalText:
+      'Personal message about the warmth of her hugs will eventually appear here.'
+  },
+
+  crab: {
+    id: 'crab',
+
+    name: 'Crab Nebula',
+
+    subtitle:
+      'Messier 1',
+
+    type: 'nebula',
+
+    position: [
+      -2.8,
+      -1.25,
+      -0.2
+    ],
+
+    astronomicalText:
+      'The Crab Nebula is a supernova remnant in Taurus. It is the expanding debris of a stellar explosion observed from Earth in the year 1054.',
+
+    personalText:
+      'Personal message about the intensity of being close to her will eventually appear here.'
+  }
 }
 
-const taurusStars: TaurusStarData[] = [
+// ======================================================
+// PRINCIPAL TAURUS STARS
+// ======================================================
 
+const taurusStars:
+  TaurusStarData[] = [
   {
     name: 'Aldebaran',
-    position: [1.7, -0.15, 0],
-    color: 0xff6b32,
-    size: 0.22,
-    interactive: true
+    position: [
+      1.65,
+      -0.15,
+      0
+    ],
+    color: 0xff7545,
+    size: 0.18
   },
 
   {
     name: 'Theta Tauri',
-    position: [1.0, -0.55, 0],
-    color: 0xffecd1,
-    size: 0.10
+    position: [
+      1.05,
+      -0.52,
+      0
+    ],
+    color: 0xffedd4,
+    size: 0.09
   },
 
   {
-    name: 'Lambda Tauri',
-    position: [0.60, 0.35, 0],
-    color: 0xe6edff,
-    size: 0.11
+    name: 'Gamma Tauri',
+    position: [
+      0.7,
+      0.25,
+      0
+    ],
+    color: 0xf2f2e8,
+    size: 0.09
+  },
+
+  {
+    name: 'Delta Tauri',
+    position: [
+      0.95,
+      0.05,
+      0
+    ],
+    color: 0xffefd8,
+    size: 0.08
   },
 
   {
     name: 'Ain',
-    position: [0.05, 1.05, 0],
-    color: 0xfff2d8,
-    size: 0.13
+    position: [
+      0.05,
+      1.05,
+      0
+    ],
+    color: 0xfff0ca,
+    size: 0.11
   },
 
   {
     name: 'Elnath',
-    position: [-1.75, 1.75, 0],
-    color: 0xdde8ff,
-    size: 0.15
+    position: [
+      -1.85,
+      1.85,
+      0
+    ],
+    color: 0xdde7ff,
+    size: 0.14
   },
 
   {
-    name: 'Zeta Tauri',
-    position: [-1.95, -1.35, 0],
+    name: 'Tianguan',
+    position: [
+      -2.15,
+      -1.45,
+      0
+    ],
     color: 0xdce7ff,
-    size: 0.13
+    size: 0.12
+  },
+
+  {
+    name: 'Lambda Tauri',
+    position: [
+      0.45,
+      0.55,
+      0
+    ],
+    color: 0xe5ecff,
+    size: 0.09
+  },
+
+  {
+    name: 'Xi Tauri',
+    position: [
+      2.15,
+      -1.0,
+      0
+    ],
+    color: 0xf2f5ff,
+    size: 0.075
+  },
+
+  {
+    name: 'Omicron Tauri',
+    position: [
+      2.55,
+      -1.35,
+      0
+    ],
+    color: 0xffedd8,
+    size: 0.07
   }
 ]
 
+// ======================================================
+// CONSTELLATION GROUP
+// ======================================================
 
-// ==================================================
-// TAURUS GROUP
-// ==================================================
-
-const taurusGroup =
+const overviewGroup =
   new THREE.Group()
 
 scene.add(
-  taurusGroup
+  overviewGroup
 )
 
+// ======================================================
+// CREATE PRINCIPAL STARS
+// ======================================================
 
-// ==================================================
-// CREATE TAURUS STARS
-// ==================================================
-
-const taurusStarMeshes:
-  THREE.Mesh[] = []
+const starByName =
+  new Map<
+    string,
+    THREE.Mesh
+  >()
 
 taurusStars.forEach(
   (starData) => {
-
     const geometry =
       new THREE.SphereGeometry(
         starData.size,
-        32,
-        32
+        24,
+        24
       )
 
     const material =
@@ -215,73 +426,54 @@ taurusStars.forEach(
       )
 
     star.position.set(
-      starData.position[0],
-      starData.position[1],
-      starData.position[2]
+      ...starData.position
     )
 
-    star.userData = {
-      name:
-        starData.name,
-
-      interactive:
-        starData.interactive
-        ?? false
-    }
-
-    taurusGroup.add(
+    overviewGroup.add(
       star
     )
-
-    taurusStarMeshes.push(
-      star
-    )
-  }
-)
-
-
-// ==================================================
-// STAR LOOKUP
-// ==================================================
-
-const starByName =
-  new Map<
-    string,
-    THREE.Mesh
-  >()
-
-taurusStarMeshes.forEach(
-  (star) => {
 
     starByName.set(
-      star.userData.name,
+      starData.name,
       star
     )
   }
 )
 
-
-// ==================================================
+// ======================================================
 // CONSTELLATION LINES
-// ==================================================
+// ======================================================
 
-function createConstellationLine(
-  from: THREE.Vector3,
-  to: THREE.Vector3
+function connectStars(
+  fromName: string,
+  toName: string
 ) {
+  const from =
+    starByName.get(
+      fromName
+    )
+
+  const to =
+    starByName.get(
+      toName
+    )
+
+  if (!from || !to) {
+    return
+  }
 
   const geometry =
     new THREE.BufferGeometry()
       .setFromPoints([
-        from,
-        to
+        from.position,
+        to.position
       ])
 
   const material =
     new THREE.LineBasicMaterial({
-      color: 0x4b5870,
+      color: 0x61708c,
       transparent: true,
-      opacity: 0.50
+      opacity: 0.34
     })
 
   const line =
@@ -290,43 +482,18 @@ function createConstellationLine(
       material
     )
 
-  taurusGroup.add(
+  overviewGroup.add(
     line
   )
 }
 
-function connectStars(
-  starA: string,
-  starB: string
-) {
-
-  const a =
-    starByName.get(
-      starA
-    )
-
-  const b =
-    starByName.get(
-      starB
-    )
-
-  if (!a || !b) {
-    return
-  }
-
-  createConstellationLine(
-    a.position,
-    b.position
-  )
-}
-
-
-// ==================================================
-// TAURUS SHAPE
-// ==================================================
-
 connectStars(
   'Aldebaran',
+  'Gamma Tauri'
+)
+
+connectStars(
+  'Gamma Tauri',
   'Lambda Tauri'
 )
 
@@ -347,193 +514,575 @@ connectStars(
 
 connectStars(
   'Theta Tauri',
-  'Zeta Tauri'
+  'Tianguan'
 )
 
+connectStars(
+  'Aldebaran',
+  'Xi Tauri'
+)
 
-// ==================================================
-// DETAIL ALDEBARAN
-// ==================================================
+connectStars(
+  'Xi Tauri',
+  'Omicron Tauri'
+)
 
-const detailAldebaranGeometry =
-  new THREE.SphereGeometry(
-    1.2,
-    64,
-    64
+// ======================================================
+// OVERVIEW CLUSTER MARKERS
+// ======================================================
+
+function createSmallCluster(
+  position:
+    [number, number, number],
+  count: number,
+  spread: number,
+  color: number
+) {
+  const group =
+    new THREE.Group()
+
+  group.position.set(
+    ...position
   )
 
-const detailAldebaranMaterial =
+  for (
+    let i = 0;
+    i < count;
+    i++
+  ) {
+    const size =
+      0.025 +
+      Math.random() *
+      0.035
+
+    const geometry =
+      new THREE.SphereGeometry(
+        size,
+        12,
+        12
+      )
+
+    const material =
+      new THREE.MeshBasicMaterial({
+        color
+      })
+
+    const star =
+      new THREE.Mesh(
+        geometry,
+        material
+      )
+
+    star.position.set(
+      (
+        Math.random() -
+        0.5
+      ) * spread,
+
+      (
+        Math.random() -
+        0.5
+      ) * spread,
+
+      (
+        Math.random() -
+        0.5
+      ) * 0.3
+    )
+
+    group.add(
+      star
+    )
+  }
+
+  overviewGroup.add(
+    group
+  )
+
+  return group
+}
+
+createSmallCluster(
+  destinations.hyades.position,
+  18,
+  0.85,
+  0xf4e7d2
+)
+
+createSmallCluster(
+  destinations.pleiades.position,
+  14,
+  0.58,
+  0xdceaff
+)
+
+// ======================================================
+// CRAB OVERVIEW MARKER
+// ======================================================
+
+const crabMarkerGeometry =
+  new THREE.SphereGeometry(
+    0.11,
+    24,
+    24
+  )
+
+const crabMarkerMaterial =
   new THREE.MeshBasicMaterial({
-    color: 0xff6b32
+    color: 0x9cb4d6,
+    transparent: true,
+    opacity: 0.6
   })
 
-const detailAldebaran =
+const crabMarker =
   new THREE.Mesh(
-    detailAldebaranGeometry,
-    detailAldebaranMaterial
+    crabMarkerGeometry,
+    crabMarkerMaterial
   )
 
-detailAldebaran.position.set(
+crabMarker.position.set(
+  ...destinations.crab.position
+)
+
+overviewGroup.add(
+  crabMarker
+)
+
+// ======================================================
+// TOUCH / CLICK TARGETS
+// ======================================================
+
+const hitTargets:
+  THREE.Mesh[] = []
+
+function createHitTarget(
+  destination:
+    DestinationData,
+  radius = 0.42
+) {
+  const geometry =
+    new THREE.SphereGeometry(
+      radius,
+      16,
+      16
+    )
+
+  const material =
+    new THREE.MeshBasicMaterial({
+      transparent: true,
+      opacity: 0,
+      depthWrite: false
+    })
+
+  const hitTarget =
+    new THREE.Mesh(
+      geometry,
+      material
+    )
+
+  hitTarget.position.set(
+    ...destination.position
+  )
+
+  hitTarget.userData = {
+    destinationId:
+      destination.id
+  }
+
+  overviewGroup.add(
+    hitTarget
+  )
+
+  hitTargets.push(
+    hitTarget
+  )
+}
+
+createHitTarget(
+  destinations.aldebaran,
+  0.46
+)
+
+createHitTarget(
+  destinations.hyades,
+  0.58
+)
+
+createHitTarget(
+  destinations.pleiades,
+  0.55
+)
+
+createHitTarget(
+  destinations.crab,
+  0.48
+)
+
+// ======================================================
+// DETAIL ROOT GROUP
+// ======================================================
+
+const detailGroup =
+  new THREE.Group()
+
+detailGroup.visible =
+  false
+
+scene.add(
+  detailGroup
+)
+
+// ======================================================
+// DETAIL: ALDEBARAN
+// ======================================================
+
+const aldebaranDetail =
+  new THREE.Group()
+
+const aldebaranSphere =
+  new THREE.Mesh(
+    new THREE.SphereGeometry(
+      1.18,
+      64,
+      64
+    ),
+
+    new THREE.MeshBasicMaterial({
+      color: 0xff6c35
+    })
+  )
+
+aldebaranDetail.add(
+  aldebaranSphere
+)
+
+const aldebaranGlow =
+  new THREE.Mesh(
+    new THREE.SphereGeometry(
+      1.38,
+      64,
+      64
+    ),
+
+    new THREE.MeshBasicMaterial({
+      color: 0xff3518,
+      transparent: true,
+      opacity: 0.12,
+      side: THREE.BackSide
+    })
+  )
+
+aldebaranDetail.add(
+  aldebaranGlow
+)
+
+// ======================================================
+// DETAIL: CLUSTER FACTORY
+// ======================================================
+
+function createDetailCluster(
+  count: number,
+  spread: number,
+  color: number
+) {
+  const group =
+    new THREE.Group()
+
+  for (
+    let i = 0;
+    i < count;
+    i++
+  ) {
+    const size =
+      0.035 +
+      Math.random() *
+      0.065
+
+    const sphere =
+      new THREE.Mesh(
+        new THREE.SphereGeometry(
+          size,
+          16,
+          16
+        ),
+
+        new THREE.MeshBasicMaterial({
+          color
+        })
+      )
+
+    sphere.position.set(
+      (
+        Math.random() -
+        0.5
+      ) * spread,
+
+      (
+        Math.random() -
+        0.5
+      ) * spread,
+
+      (
+        Math.random() -
+        0.5
+      ) * 1.4
+    )
+
+    group.add(
+      sphere
+    )
+  }
+
+  return group
+}
+
+const hyadesDetail =
+  createDetailCluster(
+    70,
+    2.7,
+    0xffedd6
+  )
+
+const pleiadesDetail =
+  createDetailCluster(
+    55,
+    2.0,
+    0xdceaff
+  )
+
+// ======================================================
+// DETAIL: CRAB PLACEHOLDER
+// ======================================================
+
+const crabDetail =
+  new THREE.Group()
+
+for (
+  let i = 0;
+  i < 9;
+  i++
+) {
+  const radius =
+    0.45 +
+    i * 0.075
+
+  const cloud =
+    new THREE.Mesh(
+      new THREE.SphereGeometry(
+        radius,
+        32,
+        32
+      ),
+
+      new THREE.MeshBasicMaterial({
+        color:
+          i % 2 === 0
+            ? 0x6686aa
+            : 0xa06070,
+
+        transparent: true,
+
+        opacity:
+          0.045,
+
+        wireframe:
+          false
+      })
+    )
+
+  cloud.scale.set(
+    1.55,
+    0.85 +
+      i * 0.025,
+    0.7
+  )
+
+  cloud.rotation.z =
+    i * 0.17
+
+  crabDetail.add(
+    cloud
+  )
+}
+
+// ======================================================
+// DETAIL VISUAL LOOKUP
+// ======================================================
+
+const detailVisuals:
+  Record<
+    DestinationId,
+    THREE.Object3D
+  > = {
+  aldebaran:
+    aldebaranDetail,
+
+  hyades:
+    hyadesDetail,
+
+  pleiades:
+    pleiadesDetail,
+
+  crab:
+    crabDetail
+}
+
+Object.values(
+  detailVisuals
+).forEach(
+  visual => {
+    visual.visible =
+      false
+
+    detailGroup.add(
+      visual
+    )
+  }
+)
+
+detailGroup.position.set(
   -1.35,
   0,
   0
 )
 
-detailAldebaran.visible =
-  false
+// ======================================================
+// USER INTERFACE
+// ======================================================
 
-scene.add(
-  detailAldebaran
-)
-
-
-// ==================================================
-// TEMPORARY GLOW
-// ==================================================
-
-const detailGlowGeometry =
-  new THREE.SphereGeometry(
-    1.38,
-    64,
-    64
+const interfaceRoot =
+  document.createElement(
+    'div'
   )
 
-const detailGlowMaterial =
-  new THREE.MeshBasicMaterial({
-    color: 0xff3517,
-    transparent: true,
-    opacity: 0.10,
-    side: THREE.BackSide
-  })
+interfaceRoot.className =
+  'ui-root'
 
-const detailGlow =
-  new THREE.Mesh(
-    detailGlowGeometry,
-    detailGlowMaterial
-  )
+interfaceRoot.innerHTML = `
+  <div class="overview-ui">
+    <div class="project-title">
+      <span>TAURUS</span>
+      <small>Explore the constellation</small>
+    </div>
 
-detailGlow.position.copy(
-  detailAldebaran.position
-)
+    <div class="progress">
+      <span class="progress-text">
+        0 / 4 explored
+      </span>
+    </div>
+  </div>
 
-detailGlow.visible =
-  false
+  <section class="detail-panel">
+    <div class="detail-content">
 
-scene.add(
-  detailGlow
-)
+      <p class="detail-kicker"></p>
 
+      <h1 class="detail-title"></h1>
 
-// ==================================================
-// HTML DETAIL PANEL
-// ==================================================
+      <p class="detail-astronomy"></p>
 
-const detailPanel =
-  document.createElement('div')
+      <div class="detail-divider"></div>
 
-detailPanel.className =
-  'detail-panel'
+      <p class="detail-personal"></p>
 
-detailPanel.innerHTML = `
-  <div class="detail-content">
-    <p class="detail-kicker">
-      TAURUS
+      <div class="detail-actions">
+        <button
+          class="more-button"
+          type="button"
+        >
+          Learn more
+        </button>
+
+        <button
+          class="back-button"
+          type="button"
+        >
+          ← Return
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="rotate-notice">
+    <div class="rotate-icon">
+      ↻
+    </div>
+
+    <p>
+      Rotate your device
     </p>
 
-    <h1>
-      Aldebaran
-    </h1>
-
-    <p class="detail-description">
-      The brightest star in Taurus.
-      This is only temporary content
-      while we build the final
-      astronomical presentation.
-    </p>
-
-    <button
-      class="back-button"
-      type="button"
-    >
-      ← Return
-    </button>
+    <small>
+      Sag2 is designed for landscape mode.
+    </small>
   </div>
 `
 
 document.body.appendChild(
-  detailPanel
+  interfaceRoot
 )
 
+const overviewUI =
+  interfaceRoot.querySelector(
+    '.overview-ui'
+  ) as HTMLElement
+
+const detailPanel =
+  interfaceRoot.querySelector(
+    '.detail-panel'
+  ) as HTMLElement
+
+const detailKicker =
+  interfaceRoot.querySelector(
+    '.detail-kicker'
+  ) as HTMLElement
+
+const detailTitle =
+  interfaceRoot.querySelector(
+    '.detail-title'
+  ) as HTMLElement
+
+const detailAstronomy =
+  interfaceRoot.querySelector(
+    '.detail-astronomy'
+  ) as HTMLElement
+
+const detailPersonal =
+  interfaceRoot.querySelector(
+    '.detail-personal'
+  ) as HTMLElement
+
+const progressText =
+  interfaceRoot.querySelector(
+    '.progress-text'
+  ) as HTMLElement
+
 const backButton =
-  detailPanel.querySelector(
+  interfaceRoot.querySelector(
     '.back-button'
   ) as HTMLButtonElement
 
+const moreButton =
+  interfaceRoot.querySelector(
+    '.more-button'
+  ) as HTMLButtonElement
 
-// ==================================================
-// RAYCASTING
-// ==================================================
+// ======================================================
+// VISITED STATE
+// ======================================================
 
-const raycaster =
-  new THREE.Raycaster()
+const visitedDestinations =
+  new Set<DestinationId>()
 
-const pointer =
-  new THREE.Vector2()
-
-function updatePointer(
-  clientX: number,
-  clientY: number
-) {
-
-  pointer.x =
-    (
-      clientX /
-      window.innerWidth
-    ) * 2 - 1
-
-  pointer.y =
-    -(
-      clientY /
-      window.innerHeight
-    ) * 2 + 1
+function updateProgress() {
+  progressText.textContent =
+    `${visitedDestinations.size} / 4 explored`
 }
 
-function getInteractiveStar() {
-
-  raycaster.setFromCamera(
-    pointer,
-    camera
-  )
-
-  const intersections =
-    raycaster.intersectObjects(
-      taurusStarMeshes,
-      false
-    )
-
-  for (
-    const intersection
-    of intersections
-  ) {
-
-    const object =
-      intersection.object
-
-    if (
-      object.userData
-        .interactive
-    ) {
-      return object
-    }
-  }
-
-  return null
-}
-
-
-// ==================================================
+// ======================================================
 // APP STATE
-// ==================================================
+// ======================================================
 
 type ViewState =
   | 'overview'
@@ -545,35 +1094,42 @@ let viewState:
   ViewState =
   'overview'
 
+let currentDestination:
+  DestinationId |
+  null =
+  null
+
 let transitionProgress =
   0
 
 const transitionDuration =
-  1.8
+  1.65
 
-const cameraStartPosition =
+const cameraStart =
   new THREE.Vector3()
 
-const cameraTargetPosition =
+const cameraEnd =
   new THREE.Vector3()
 
-const taurusStartScale =
+const overviewScaleStart =
   new THREE.Vector3()
 
-const taurusTargetScale =
+const overviewScaleEnd =
   new THREE.Vector3()
 
-
-// ==================================================
+// ======================================================
 // EASING
-// ==================================================
+// ======================================================
 
 function easeInOutCubic(
   value: number
 ) {
-
   return value < 0.5
-    ? 4 * value * value * value
+    ? 4 *
+      value *
+      value *
+      value
+
     : 1 -
       Math.pow(
         -2 * value + 2,
@@ -581,13 +1137,99 @@ function easeInOutCubic(
       ) / 2
 }
 
+// ======================================================
+// RAYCASTER
+// ======================================================
 
-// ==================================================
-// ENTER DETAIL VIEW
-// ==================================================
+const raycaster =
+  new THREE.Raycaster()
 
-function enterAldebaran() {
+const pointer =
+  new THREE.Vector2()
 
+function updatePointer(
+  event: PointerEvent
+) {
+  pointer.x =
+    (
+      event.clientX /
+      window.innerWidth
+    ) * 2 - 1
+
+  pointer.y =
+    -(
+      event.clientY /
+      window.innerHeight
+    ) * 2 + 1
+}
+
+function getDestinationAtPointer():
+  DestinationId |
+  null {
+  raycaster.setFromCamera(
+    pointer,
+    camera
+  )
+
+  const hits =
+    raycaster.intersectObjects(
+      hitTargets,
+      false
+    )
+
+  if (
+    hits.length === 0
+  ) {
+    return null
+  }
+
+  return hits[0]
+    .object
+    .userData
+    .destinationId
+}
+
+// ======================================================
+// DETAIL VIEW
+// ======================================================
+
+function showDestinationVisual(
+  id: DestinationId
+) {
+  Object.entries(
+    detailVisuals
+  ).forEach(
+    ([key, visual]) => {
+      visual.visible =
+        key === id
+    }
+  )
+}
+
+function updateDetailContent(
+  destination:
+    DestinationData
+) {
+  detailKicker.textContent =
+    destination.subtitle
+
+  detailTitle.textContent =
+    destination.name
+
+  detailAstronomy.textContent =
+    destination.astronomicalText
+
+  detailPersonal.textContent =
+    destination.personalText
+}
+
+// ======================================================
+// ENTER DESTINATION
+// ======================================================
+
+function enterDestination(
+  id: DestinationId
+) {
   if (
     viewState !==
     'overview'
@@ -595,47 +1237,66 @@ function enterAldebaran() {
     return
   }
 
+  currentDestination =
+    id
+
+  visitedDestinations.add(
+    id
+  )
+
+  updateProgress()
+
+  const destination =
+    destinations[id]
+
+  updateDetailContent(
+    destination
+  )
+
+  showDestinationVisual(
+    id
+  )
+
+  detailGroup.visible =
+    true
+
   viewState =
     'entering'
 
   transitionProgress =
     0
 
-  cameraStartPosition.copy(
+  cameraStart.copy(
     camera.position
   )
 
-  cameraTargetPosition.copy(
+  cameraEnd.copy(
     detailCameraPosition
   )
 
-  taurusStartScale.copy(
-    taurusGroup.scale
+  overviewScaleStart.copy(
+    overviewGroup.scale
   )
 
-  taurusTargetScale.set(
-    0.01,
-    0.01,
-    0.01
+  overviewScaleEnd.set(
+    0.02,
+    0.02,
+    0.02
   )
 
-  detailAldebaran.visible =
-    true
-
-  detailGlow.visible =
-    true
+  overviewUI.classList.add(
+    'hidden'
+  )
 
   document.body.style.cursor =
     'default'
 }
 
+// ======================================================
+// LEAVE DESTINATION
+// ======================================================
 
-// ==================================================
-// LEAVE DETAIL VIEW
-// ==================================================
-
-function leaveAldebaran() {
-
+function leaveDestination() {
   if (
     viewState !==
     'detail'
@@ -653,34 +1314,32 @@ function leaveAldebaran() {
     'visible'
   )
 
-  cameraStartPosition.copy(
+  cameraStart.copy(
     camera.position
   )
 
-  cameraTargetPosition.copy(
+  cameraEnd.copy(
     overviewCameraPosition
   )
 
-  taurusStartScale.copy(
-    taurusGroup.scale
+  overviewScaleStart.copy(
+    overviewGroup.scale
   )
 
-  taurusTargetScale.set(
+  overviewScaleEnd.set(
     1,
     1,
     1
   )
 }
 
-
-// ==================================================
-// POINTER MOVEMENT
-// ==================================================
+// ======================================================
+// POINTER EVENTS
+// ======================================================
 
 window.addEventListener(
   'pointermove',
-  (event) => {
-
+  event => {
     if (
       viewState !==
       'overview'
@@ -689,29 +1348,22 @@ window.addEventListener(
     }
 
     updatePointer(
-      event.clientX,
-      event.clientY
+      event
     )
 
-    const star =
-      getInteractiveStar()
+    const destination =
+      getDestinationAtPointer()
 
     document.body.style.cursor =
-      star
+      destination
         ? 'pointer'
         : 'default'
   }
 )
 
-
-// ==================================================
-// POINTER CLICK
-// ==================================================
-
 window.addEventListener(
   'pointerdown',
-  (event) => {
-
+  event => {
     if (
       viewState !==
       'overview'
@@ -720,75 +1372,86 @@ window.addEventListener(
     }
 
     updatePointer(
-      event.clientX,
-      event.clientY
+      event
     )
 
-    const star =
-      getInteractiveStar()
+    const destination =
+      getDestinationAtPointer()
 
-    if (
-      star?.userData.name ===
-      'Aldebaran'
-    ) {
-
-      enterAldebaran()
+    if (destination) {
+      enterDestination(
+        destination
+      )
     }
   }
 )
 
-
-// ==================================================
-// RETURN BUTTON
-// ==================================================
+// ======================================================
+// UI BUTTONS
+// ======================================================
 
 backButton.addEventListener(
   'click',
-  () => {
+  leaveDestination
+)
 
-    leaveAldebaran()
+moreButton.addEventListener(
+  'click',
+  () => {
+    if (
+      !currentDestination
+    ) {
+      return
+    }
+
+    const destination =
+      destinations[
+        currentDestination
+      ]
+
+    alert(
+      `More detailed information about ${destination.name} will be added in the astronomy-information phase.`
+    )
   }
 )
 
+// ======================================================
+// RESIZE
+// ======================================================
 
-// ==================================================
-// WINDOW RESIZE
-// ==================================================
+function resize() {
+  camera.aspect =
+    window.innerWidth /
+    window.innerHeight
+
+  camera.updateProjectionMatrix()
+
+  renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+  )
+
+  renderer.setPixelRatio(
+    Math.min(
+      window.devicePixelRatio,
+      2
+    )
+  )
+}
 
 window.addEventListener(
   'resize',
-  () => {
-
-    camera.aspect =
-      window.innerWidth /
-      window.innerHeight
-
-    camera.updateProjectionMatrix()
-
-    renderer.setSize(
-      window.innerWidth,
-      window.innerHeight
-    )
-
-    renderer.setPixelRatio(
-      Math.min(
-        window.devicePixelRatio,
-        2
-      )
-    )
-  }
+  resize
 )
 
-
-// ==================================================
+// ======================================================
 // ANIMATION
-// ==================================================
+// ======================================================
 
 const clock =
   new THREE.Clock()
 
 function animate() {
-
   requestAnimationFrame(
     animate
   )
@@ -796,39 +1459,46 @@ function animate() {
   const delta =
     clock.getDelta()
 
-  const elapsedTime =
+  const elapsed =
     clock.elapsedTime
 
-  // -----------------------------------------------
-  // Background movement
-  // -----------------------------------------------
+  // ------------------------------------------
+  // Ambient starfield movement
+  // ------------------------------------------
 
   starField.rotation.y =
-    elapsedTime * 0.002
+    elapsed *
+    0.0018
 
+  // ------------------------------------------
+  // Detail visual movement
+  // ------------------------------------------
 
-  // -----------------------------------------------
-  // Detail star rotation
-  // -----------------------------------------------
+  aldebaranSphere.rotation.y +=
+    delta * 0.1
 
-  if (
-    detailAldebaran.visible
-  ) {
+  aldebaranDetail.rotation.z =
+    Math.sin(
+      elapsed * 0.12
+    ) * 0.02
 
-    detailAldebaran.rotation.y +=
-      delta * 0.12
-  }
+  hyadesDetail.rotation.y +=
+    delta * 0.018
 
+  pleiadesDetail.rotation.y +=
+    delta * 0.025
 
-  // -----------------------------------------------
-  // Enter transition
-  // -----------------------------------------------
+  crabDetail.rotation.z +=
+    delta * 0.012
+
+  // ------------------------------------------
+  // ENTER
+  // ------------------------------------------
 
   if (
     viewState ===
     'entering'
   ) {
-
     transitionProgress +=
       delta /
       transitionDuration
@@ -845,26 +1515,26 @@ function animate() {
       )
 
     camera.position.lerpVectors(
-      cameraStartPosition,
-      cameraTargetPosition,
+      cameraStart,
+      cameraEnd,
       eased
     )
 
-    taurusGroup.scale.lerpVectors(
-      taurusStartScale,
-      taurusTargetScale,
-      eased
-    )
+    overviewGroup.scale
+      .lerpVectors(
+        overviewScaleStart,
+        overviewScaleEnd,
+        eased
+      )
 
     if (
       normalized >= 1
     ) {
+      overviewGroup.visible =
+        false
 
       viewState =
         'detail'
-
-      taurusGroup.visible =
-        false
 
       detailPanel.classList.add(
         'visible'
@@ -872,16 +1542,14 @@ function animate() {
     }
   }
 
-
-  // -----------------------------------------------
-  // Leave transition
-  // -----------------------------------------------
+  // ------------------------------------------
+  // LEAVE
+  // ------------------------------------------
 
   if (
     viewState ===
     'leaving'
   ) {
-
     transitionProgress +=
       delta /
       transitionDuration
@@ -898,35 +1566,38 @@ function animate() {
       )
 
     camera.position.lerpVectors(
-      cameraStartPosition,
-      cameraTargetPosition,
+      cameraStart,
+      cameraEnd,
       eased
     )
 
-    taurusGroup.scale.lerpVectors(
-      taurusStartScale,
-      taurusTargetScale,
-      eased
-    )
+    overviewGroup.visible =
+      true
+
+    overviewGroup.scale
+      .lerpVectors(
+        overviewScaleStart,
+        overviewScaleEnd,
+        eased
+      )
 
     if (
       normalized >= 1
     ) {
-
       viewState =
         'overview'
 
-      taurusGroup.visible =
-        true
-
-      detailAldebaran.visible =
+      detailGroup.visible =
         false
 
-      detailGlow.visible =
-        false
+      overviewUI.classList.remove(
+        'hidden'
+      )
+
+      currentDestination =
+        null
     }
   }
-
 
   renderer.render(
     scene,
