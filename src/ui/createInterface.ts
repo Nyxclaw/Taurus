@@ -30,11 +30,11 @@ export function createInterface() {
 
     </div>
 
-    <section class="detail-panel">
+    <!-- ==================================================
+         DESTINATION PANEL
+         ================================================== -->
 
-      <!-- =============================================
-           MAIN DESTINATION CONTENT
-           ============================================= -->
+    <section class="detail-panel">
 
       <div class="detail-content">
 
@@ -84,9 +84,9 @@ export function createInterface() {
 
       </div>
 
-      <!-- =============================================
+      <!-- ==============================================
            MORE INFO
-           ============================================= -->
+           ============================================== -->
 
       <div class="more-content">
 
@@ -131,9 +131,136 @@ export function createInterface() {
 
     </section>
 
-    <!-- ===============================================
+    <!-- ==================================================
+         FINAL MESSAGE
+         ================================================== -->
+
+    <section class="final-panel">
+
+      <div class="final-content">
+
+        <div class="final-opening">
+
+          <blockquote
+            class="final-quote"
+          >
+            “I’ll search the skies for you.”
+          </blockquote>
+
+          <p
+            class="final-attribution"
+          >
+            STARSET — Die For You
+          </p>
+
+        </div>
+
+        <div
+          class="final-divider"
+        ></div>
+
+        <div
+          class="final-message"
+        >
+
+          <p>
+            Quise hacer esto porque a veces me cuesta
+            encontrar una forma sencilla de decir todo
+            lo que pienso y siento por ti.
+          </p>
+
+          <p>
+            El cielo siempre ha sido algo que admiro
+            muchísimo, así que supongo que terminé
+            haciendo lo que me resulta más natural:
+            buscar ahí arriba alguna manera de
+            explicarlo. Entre estrellas, cúmulos y cosas
+            que están a años luz de nosotros, terminé
+            encontrando pequeñas partes de todo aquello
+            que me recuerda a ti.
+          </p>
+
+          <p>
+            Tu mirada, las cosas que admiro de ti,
+            lo bien que se siente estar cerca de ti y
+            esa intensidad que algunos momentos contigo
+            consiguen dejar después.
+          </p>
+
+          <p>
+            Quizá por eso me gusta pensar en todo esto
+            como distancias que poco a poco se vuelven
+            más pequeñas. Cosas que inicialmente parecen
+            lejanas hasta que encuentras una manera de
+            acercarte a ellas.
+          </p>
+
+          <p>
+            Cuatro objetos probablemente no sean
+            suficientes para decir todo lo que me
+            gustaría. Y quizá nunca encuentre una
+            estrella, una nebulosa o una constelación
+            capaz de explicarlo por completo.
+          </p>
+
+          <p>
+            Pero creo que eso también me gusta.
+            Significa que todavía quedan muchas cosas
+            por descubrir, muchas noches para mirar
+            hacia arriba y muchas formas nuevas de
+            intentar decirte lo que a veces me cuesta
+            expresar con palabras.
+          </p>
+
+        </div>
+
+        <div
+          class="final-secondary-quote"
+        >
+
+          <blockquote>
+            “This is the start of something new.”
+          </blockquote>
+
+          <p>
+            Sleep Token — Telomeres
+          </p>
+
+        </div>
+
+        <p
+          class="final-ending"
+        >
+          Y si voy a seguir buscando respuestas
+          en el cielo, me gustaría hacerlo contigo.
+        </p>
+
+        <button
+          class="final-back-button"
+          type="button"
+        >
+          ← Volver al cielo
+        </button>
+
+      </div>
+
+    </section>
+
+    <!-- ==================================================
+         REOPEN LETTER BUTTON
+         ================================================== -->
+
+    <button
+      class="letter-button"
+      type="button"
+      aria-label="Volver a leer la carta"
+    >
+      Carta
+    </button>
+
+    <!-- ==================================================
          PORTRAIT NOTICE
-         =============================================== -->
+         ================================================== -->
 
     <div class="rotate-notice">
 
@@ -178,6 +305,16 @@ export function createInterface() {
   const moreContent =
     root.querySelector(
       '.more-content'
+    ) as HTMLElement
+
+  const finalPanel =
+    root.querySelector(
+      '.final-panel'
+    ) as HTMLElement
+
+  const finalContent =
+    root.querySelector(
+      '.final-content'
     ) as HTMLElement
 
   const kicker =
@@ -235,6 +372,16 @@ export function createInterface() {
       '.more-back-button'
     ) as HTMLButtonElement
 
+  const finalBackButton =
+    root.querySelector(
+      '.final-back-button'
+    ) as HTMLButtonElement
+
+  const letterButton =
+    root.querySelector(
+      '.letter-button'
+    ) as HTMLButtonElement
+
   // ==================================================
   // DESTINATION CONTENT
   // ==================================================
@@ -264,7 +411,6 @@ export function createInterface() {
     moreObservation.textContent =
       destination.moreInfo.observation
 
-    // Always begin on the main view.
     closeMoreInfo()
   }
 
@@ -338,12 +484,62 @@ export function createInterface() {
     )
   }
 
+  // ==================================================
+  // FINAL MESSAGE
+  // ==================================================
+
+  function openFinalPanel() {
+    hideOverview()
+
+    finalPanel.classList.add(
+      'visible'
+    )
+
+    hideLetterButton()
+
+    finalContent.scrollTop =
+      0
+
+    requestAnimationFrame(
+      () => {
+        finalContent.scrollTop =
+          0
+      }
+    )
+  }
+
+  function closeFinalPanel() {
+    finalPanel.classList.remove(
+      'visible'
+    )
+
+    showOverview()
+  }
+
+  // ==================================================
+  // LETTER BUTTON
+  // ==================================================
+
+  function showLetterButton() {
+    letterButton.classList.add(
+      'visible'
+    )
+  }
+
+  function hideLetterButton() {
+    letterButton.classList.remove(
+      'visible'
+    )
+  }
+
   return {
     root,
 
     backButton,
     moreButton,
     moreBackButton,
+    finalBackButton,
+    letterButton,
 
     showDetail,
     setProgress,
@@ -355,7 +551,13 @@ export function createInterface() {
     closeDetailPanel,
 
     openMoreInfo,
-    closeMoreInfo
+    closeMoreInfo,
+
+    openFinalPanel,
+    closeFinalPanel,
+
+    showLetterButton,
+    hideLetterButton
   }
 }
 

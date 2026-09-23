@@ -66,13 +66,21 @@ export function createNavigation(
   } = options
 
   // ==================================================
-  // VISITED DESTINATIONS
+  // DESTINATION PROGRESS
   // ==================================================
 
   const visitedDestinations =
     new Set<
       DestinationId
     >()
+
+  const totalDestinations =
+    Object.keys(
+      destinations
+    ).length
+
+  let finalMessageShown =
+    false
 
   // ==================================================
   // RAYCASTING
@@ -187,10 +195,14 @@ export function createNavigation(
   function updateProgress() {
     ui.setProgress(
       visitedDestinations.size,
+      totalDestinations
+    )
+  }
 
-      Object.keys(
-        destinations
-      ).length
+  function isJourneyComplete() {
+    return (
+      visitedDestinations.size >=
+      totalDestinations
     )
   }
 
@@ -388,6 +400,22 @@ export function createNavigation(
     }
   )
 
+  ui.finalBackButton.addEventListener(
+    'click',
+    () => {
+      ui.closeFinalPanel()
+
+      ui.showLetterButton()
+    }
+  )
+
+  ui.letterButton.addEventListener(
+    'click',
+    () => {
+      ui.openFinalPanel()
+    }
+  )
+
   // ==================================================
   // ANIMATION UPDATE
   // ==================================================
@@ -497,6 +525,25 @@ export function createNavigation(
 
         currentDestination =
           null
+
+        // ------------------------------------------
+        // FINAL MESSAGE
+        // ------------------------------------------
+
+        if (
+          isJourneyComplete() &&
+          !finalMessageShown
+        ) {
+          finalMessageShown =
+            true
+
+          window.setTimeout(
+            () => {
+              ui.openFinalPanel()
+            },
+            850
+          )
+        }
       }
     }
   }
