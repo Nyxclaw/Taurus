@@ -5,8 +5,12 @@ import {
 } from './createAldebaran'
 
 import {
-  createStarCluster
-} from './createStarCluster'
+  createHyades
+} from './createHyades'
+
+import {
+  createPleiades
+} from './createPleiades'
 
 import {
   createCrabNebula
@@ -35,41 +39,37 @@ export function createDetailVisuals(
     group
   )
 
+  // ==================================================
+  // ALDEBARAN
+  // ==================================================
+
   const aldebaran =
     createAldebaran()
 
+  // ==================================================
+  // HYADES
+  // ==================================================
+
   const hyades =
-    createStarCluster({
-      count:
-        70,
+    createHyades()
 
-      spread:
-        2.7,
-
-      color:
-        0xffedd6,
-
-      rotationSpeed:
-        0.018
-    })
+  // ==================================================
+  // PLEIADES
+  // ==================================================
 
   const pleiades =
-    createStarCluster({
-      count:
-        55,
+    createPleiades()
 
-      spread:
-        2.0,
-
-      color:
-        0xdceaff,
-
-      rotationSpeed:
-        0.025
-    })
+  // ==================================================
+  // CRAB NEBULA
+  // ==================================================
 
   const crab =
     createCrabNebula()
+
+  // ==================================================
+  // VISUAL LOOKUP
+  // ==================================================
 
   const visuals:
     Record<
@@ -102,6 +102,10 @@ export function createDetailVisuals(
     }
   )
 
+  // ==================================================
+  // SHOW SELECTED DESTINATION
+  // ==================================================
+
   function show(
     id: DestinationId
   ) {
@@ -115,6 +119,10 @@ export function createDetailVisuals(
     )
   }
 
+  // ==================================================
+  // UPDATE
+  // ==================================================
+
   function update(
     elapsed: number,
     delta: number
@@ -125,10 +133,12 @@ export function createDetailVisuals(
     )
 
     hyades.update(
+        elapsed,
       delta
     )
 
     pleiades.update(
+      elapsed,
       delta
     )
 
