@@ -12,6 +12,11 @@ export type DestinationType =
 export type Vector3Tuple =
   [number, number, number]
 
+export type MoreInfoData = {
+  personal: string
+  observation: string
+}
+
 export type DestinationData = {
   id: DestinationId
   name: string
@@ -21,7 +26,11 @@ export type DestinationData = {
   position: Vector3Tuple
 
   astronomicalText: string
+
   personalText: string
+  personalAttribution: string
+
+  moreInfo: MoreInfoData
 }
 
 export type TaurusStarData = {

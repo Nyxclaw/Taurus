@@ -520,3 +520,215 @@ canvas {
     display: flex;
   }
 }
+
+/* ======================================================
+   QUOTE
+   ====================================================== */
+
+.detail-personal {
+  margin:
+    0;
+
+  padding:
+    0;
+
+  border: 0;
+
+  font-style:
+    italic;
+
+  line-height:
+    1.55;
+
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.9
+    );
+}
+
+.detail-attribution {
+  margin:
+    0.45rem
+    0
+    0;
+
+  font-size:
+    0.72rem;
+
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.42
+    );
+
+  letter-spacing:
+    0.025em;
+}
+
+
+/* ======================================================
+   MAIN / MORE CONTENT TRANSITION
+   ====================================================== */
+
+.detail-content {
+  transition:
+    opacity
+    0.3s ease,
+    transform
+    0.3s ease;
+}
+
+.detail-content.hidden {
+  display: none;
+}
+
+
+/* ======================================================
+   MORE INFO
+   ====================================================== */
+
+.more-content {
+  display: none;
+
+  width: 100%;
+  max-width: 520px;
+
+  opacity: 0;
+
+  transform:
+    translateX(18px);
+}
+
+.more-content.visible {
+  display: block;
+
+  animation:
+    more-content-in
+    0.4s ease
+    forwards;
+}
+
+@keyframes more-content-in {
+
+  from {
+    opacity: 0;
+
+    transform:
+      translateX(18px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateX(0);
+  }
+}
+
+.more-kicker {
+  margin:
+    0
+    0
+    0.7rem;
+
+  font-size:
+    0.64rem;
+
+  letter-spacing:
+    0.22em;
+
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.45
+    );
+}
+
+.more-personal,
+.more-observation {
+  margin: 0;
+
+  font-size:
+    clamp(
+      0.82rem,
+      1.2vw,
+      1rem
+    );
+
+  line-height:
+    1.65;
+
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.78
+    );
+}
+
+.more-personal {
+  color:
+    rgba(
+      255,
+      255,
+      255,
+      0.9
+    );
+}
+
+
+/* ======================================================
+   MORE INFO — MOBILE LANDSCAPE
+   ====================================================== */
+
+@media
+  (max-height: 520px)
+  and
+  (orientation: landscape) {
+
+  .detail-attribution {
+    margin-top:
+      0.25rem;
+
+    font-size:
+      0.6rem;
+  }
+
+  .more-kicker {
+    margin-bottom:
+      0.35rem;
+
+    font-size:
+      0.52rem;
+  }
+
+  .more-personal,
+  .more-observation {
+    font-size:
+      0.68rem;
+
+    line-height:
+      1.38;
+  }
+
+  .more-content
+  .detail-divider {
+    margin:
+      0.65rem
+      0;
+  }
+
+  .more-content
+  .detail-actions {
+    margin-top:
+      0.7rem;
+  }
+}

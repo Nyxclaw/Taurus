@@ -15,22 +15,26 @@ export function createInterface() {
     <div class="overview-ui">
 
       <div class="project-title">
-        <span>TAURUS</span>
+        <span>TAURO</span>
 
         <small>
-          Explore the constellation
+          Explora la constelación
         </small>
       </div>
 
       <div class="progress">
         <span class="progress-text">
-          0 / 4 explored
+          0 / 4 explorados
         </span>
       </div>
 
     </div>
 
     <section class="detail-panel">
+
+      <!-- =============================================
+           MAIN DESTINATION CONTENT
+           ============================================= -->
 
       <div class="detail-content">
 
@@ -50,8 +54,12 @@ export function createInterface() {
           class="detail-divider"
         ></div>
 
-        <p
+        <blockquote
           class="detail-personal"
+        ></blockquote>
+
+        <p
+          class="detail-attribution"
         ></p>
 
         <div
@@ -62,14 +70,59 @@ export function createInterface() {
             class="more-button"
             type="button"
           >
-            Learn more
+            Conocer más
           </button>
 
           <button
             class="back-button"
             type="button"
           >
-            ← Return
+            ← Regresar
+          </button>
+
+        </div>
+
+      </div>
+
+      <!-- =============================================
+           MORE INFO
+           ============================================= -->
+
+      <div class="more-content">
+
+        <p
+          class="more-kicker"
+        >
+          POR QUÉ ME RECUERDA A TI
+        </p>
+
+        <p
+          class="more-personal"
+        ></p>
+
+        <div
+          class="detail-divider"
+        ></div>
+
+        <p
+          class="more-kicker"
+        >
+          CÓMO OBSERVARLO
+        </p>
+
+        <p
+          class="more-observation"
+        ></p>
+
+        <div
+          class="detail-actions"
+        >
+
+          <button
+            class="more-back-button"
+            type="button"
+          >
+            ← Volver
           </button>
 
         </div>
@@ -78,6 +131,10 @@ export function createInterface() {
 
     </section>
 
+    <!-- ===============================================
+         PORTRAIT NOTICE
+         =============================================== -->
+
     <div class="rotate-notice">
 
       <div class="rotate-icon">
@@ -85,11 +142,11 @@ export function createInterface() {
       </div>
 
       <p>
-        Rotate your device
+        Gira tu dispositivo
       </p>
 
       <small>
-        Sag2 is designed for landscape mode.
+        Sag2 está diseñado para verse en horizontal.
       </small>
 
     </div>
@@ -99,6 +156,10 @@ export function createInterface() {
     root
   )
 
+  // ==================================================
+  // ELEMENTS
+  // ==================================================
+
   const overview =
     root.querySelector(
       '.overview-ui'
@@ -107,6 +168,16 @@ export function createInterface() {
   const detailPanel =
     root.querySelector(
       '.detail-panel'
+    ) as HTMLElement
+
+  const detailContent =
+    root.querySelector(
+      '.detail-content'
+    ) as HTMLElement
+
+  const moreContent =
+    root.querySelector(
+      '.more-content'
     ) as HTMLElement
 
   const kicker =
@@ -129,6 +200,21 @@ export function createInterface() {
       '.detail-personal'
     ) as HTMLElement
 
+  const attribution =
+    root.querySelector(
+      '.detail-attribution'
+    ) as HTMLElement
+
+  const morePersonal =
+    root.querySelector(
+      '.more-personal'
+    ) as HTMLElement
+
+  const moreObservation =
+    root.querySelector(
+      '.more-observation'
+    ) as HTMLElement
+
   const progress =
     root.querySelector(
       '.progress-text'
@@ -143,6 +229,15 @@ export function createInterface() {
     root.querySelector(
       '.more-button'
     ) as HTMLButtonElement
+
+  const moreBackButton =
+    root.querySelector(
+      '.more-back-button'
+    ) as HTMLButtonElement
+
+  // ==================================================
+  // DESTINATION CONTENT
+  // ==================================================
 
   function showDetail(
     destination:
@@ -159,15 +254,35 @@ export function createInterface() {
 
     personal.textContent =
       destination.personalText
+
+    attribution.textContent =
+      destination.personalAttribution
+
+    morePersonal.textContent =
+      destination.moreInfo.personal
+
+    moreObservation.textContent =
+      destination.moreInfo.observation
+
+    // Always begin on the main view.
+    closeMoreInfo()
   }
+
+  // ==================================================
+  // PROGRESS
+  // ==================================================
 
   function setProgress(
     visited: number,
     total: number
   ) {
     progress.textContent =
-      `${visited} / ${total} explored`
+      `${visited} / ${total} explorados`
   }
+
+  // ==================================================
+  // OVERVIEW
+  // ==================================================
 
   function hideOverview() {
     overview.classList.add(
@@ -181,6 +296,10 @@ export function createInterface() {
     )
   }
 
+  // ==================================================
+  // DETAIL PANEL
+  // ==================================================
+
   function openDetailPanel() {
     detailPanel.classList.add(
       'visible'
@@ -191,6 +310,32 @@ export function createInterface() {
     detailPanel.classList.remove(
       'visible'
     )
+
+    closeMoreInfo()
+  }
+
+  // ==================================================
+  // MORE INFO
+  // ==================================================
+
+  function openMoreInfo() {
+    detailContent.classList.add(
+      'hidden'
+    )
+
+    moreContent.classList.add(
+      'visible'
+    )
+  }
+
+  function closeMoreInfo() {
+    detailContent.classList.remove(
+      'hidden'
+    )
+
+    moreContent.classList.remove(
+      'visible'
+    )
   }
 
   return {
@@ -198,6 +343,7 @@ export function createInterface() {
 
     backButton,
     moreButton,
+    moreBackButton,
 
     showDetail,
     setProgress,
@@ -206,7 +352,10 @@ export function createInterface() {
     showOverview,
 
     openDetailPanel,
-    closeDetailPanel
+    closeDetailPanel,
+
+    openMoreInfo,
+    closeMoreInfo
   }
 }
 

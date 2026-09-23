@@ -65,10 +65,18 @@ export function createNavigation(
     ui
   } = options
 
+  // ==================================================
+  // VISITED DESTINATIONS
+  // ==================================================
+
   const visitedDestinations =
     new Set<
       DestinationId
     >()
+
+  // ==================================================
+  // RAYCASTING
+  // ==================================================
 
   const raycaster =
     new THREE.Raycaster()
@@ -76,13 +84,16 @@ export function createNavigation(
   const pointer =
     new THREE.Vector2()
 
+  // ==================================================
+  // STATE
+  // ==================================================
+
   let viewState:
     ViewState =
     'overview'
 
   let currentDestination:
-    DestinationId |
-    null =
+    DestinationId | null =
     null
 
   let transitionProgress =
@@ -103,6 +114,10 @@ export function createNavigation(
   const overviewScaleEnd =
     new THREE.Vector3()
 
+  // ==================================================
+  // EASING
+  // ==================================================
+
   function easeInOutCubic(
     value: number
   ) {
@@ -118,6 +133,10 @@ export function createNavigation(
           3
         ) / 2
   }
+
+  // ==================================================
+  // POINTER
+  // ==================================================
 
   function updatePointer(
     event:
@@ -137,8 +156,7 @@ export function createNavigation(
   }
 
   function getDestinationAtPointer():
-    DestinationId |
-    null {
+    DestinationId | null {
     raycaster.setFromCamera(
       pointer,
       camera
@@ -162,14 +180,23 @@ export function createNavigation(
       .destinationId
   }
 
+  // ==================================================
+  // PROGRESS
+  // ==================================================
+
   function updateProgress() {
     ui.setProgress(
       visitedDestinations.size,
+
       Object.keys(
         destinations
       ).length
     )
   }
+
+  // ==================================================
+  // ENTER DESTINATION
+  // ==================================================
 
   function enterDestination(
     id: DestinationId
@@ -234,6 +261,10 @@ export function createNavigation(
       'default'
   }
 
+  // ==================================================
+  // LEAVE DESTINATION
+  // ==================================================
+
   function leaveDestination() {
     if (
       viewState !==
@@ -241,6 +272,8 @@ export function createNavigation(
     ) {
       return
     }
+
+    ui.closeMoreInfo()
 
     viewState =
       'leaving'
@@ -269,9 +302,9 @@ export function createNavigation(
     )
   }
 
-  // -----------------------------------------
-  // Pointer movement
-  // -----------------------------------------
+  // ==================================================
+  // POINTER MOVEMENT
+  // ==================================================
 
   window.addEventListener(
     'pointermove',
@@ -297,9 +330,9 @@ export function createNavigation(
     }
   )
 
-  // -----------------------------------------
-  // Pointer / touch selection
-  // -----------------------------------------
+  // ==================================================
+  // POINTER / TOUCH SELECTION
+  // ==================================================
 
   window.addEventListener(
     'pointerdown',
@@ -326,9 +359,9 @@ export function createNavigation(
     }
   )
 
-  // -----------------------------------------
-  // Buttons
-  // -----------------------------------------
+  // ==================================================
+  // UI BUTTONS
+  // ==================================================
 
   ui.backButton.addEventListener(
     'click',
@@ -344,24 +377,29 @@ export function createNavigation(
         return
       }
 
-      const destination =
-        destinations[
-          currentDestination
-        ]
-
-      alert(
-        `More detailed information about ${destination.name} will be added in the astronomy-information phase.`
-      )
+      ui.openMoreInfo()
     }
   )
 
-  // -----------------------------------------
-  // Animation update
-  // -----------------------------------------
+  ui.moreBackButton.addEventListener(
+    'click',
+    () => {
+      ui.closeMoreInfo()
+    }
+  )
+
+  // ==================================================
+  // ANIMATION UPDATE
+  // ==================================================
 
   function update(
     delta: number
   ) {
+
+    // ----------------------------------------------
+    // ENTER
+    // ----------------------------------------------
+
     if (
       viewState ===
       'entering'
@@ -406,6 +444,10 @@ export function createNavigation(
         ui.openDetailPanel()
       }
     }
+
+    // ----------------------------------------------
+    // LEAVE
+    // ----------------------------------------------
 
     if (
       viewState ===
