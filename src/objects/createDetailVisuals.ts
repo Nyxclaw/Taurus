@@ -26,12 +26,6 @@ export function createDetailVisuals(
   const group =
     new THREE.Group()
 
-  group.position.set(
-    -1.35,
-    0,
-    0
-  )
-
   group.visible =
     false
 
@@ -40,29 +34,17 @@ export function createDetailVisuals(
   )
 
   // ==================================================
-  // ALDEBARAN
+  // DESTINATION OBJECTS
   // ==================================================
 
   const aldebaran =
     createAldebaran()
 
-  // ==================================================
-  // HYADES
-  // ==================================================
-
   const hyades =
     createHyades()
 
-  // ==================================================
-  // PLEIADES
-  // ==================================================
-
   const pleiades =
     createPleiades()
-
-  // ==================================================
-  // CRAB NEBULA
-  // ==================================================
 
   const crab =
     createCrabNebula()
@@ -103,12 +85,107 @@ export function createDetailVisuals(
   )
 
   // ==================================================
+  // ACTIVE DESTINATION
+  // ==================================================
+
+  let activeDestination:
+    DestinationId | null =
+    null
+
+  // ==================================================
+  // RESPONSIVE VISUAL TRANSFORMS
+  // ==================================================
+
+  function applyResponsiveTransform(
+    id: DestinationId
+  ) {
+    const isMobileLandscape =
+      window.innerHeight <= 520 &&
+      window.innerWidth >
+        window.innerHeight
+
+    // ------------------------------------------
+    // Reset position
+    // ------------------------------------------
+
+    group.position.set(
+      isMobileLandscape
+        ? -2.05
+        : -1.35,
+
+      0,
+      0
+    )
+
+    // ------------------------------------------
+    // Reset object scales
+    // ------------------------------------------
+
+    aldebaran.group.scale.setScalar(
+      1
+    )
+
+    hyades.group.scale.setScalar(
+      1
+    )
+
+    pleiades.group.scale.setScalar(
+      1
+    )
+
+    crab.group.scale.setScalar(
+      1.05
+    )
+
+    // ------------------------------------------
+    // Desktop
+    // ------------------------------------------
+
+    if (!isMobileLandscape) {
+      return
+    }
+
+    // ------------------------------------------
+    // Mobile landscape
+    // ------------------------------------------
+
+    switch (id) {
+      case 'aldebaran':
+        aldebaran.group.scale.setScalar(
+          1.3
+        )
+        break
+
+      case 'hyades':
+        hyades.group.scale.setScalar(
+          1.35
+        )
+        break
+
+      case 'pleiades':
+        pleiades.group.scale.setScalar(
+          1.38
+        )
+        break
+
+      case 'crab':
+        crab.group.scale.setScalar(
+          1.8
+        )
+        break
+    }
+  }
+
+  // ==================================================
   // SHOW SELECTED DESTINATION
   // ==================================================
 
   function show(
     id: DestinationId
   ) {
+    activeDestination =
+      id
+
     Object.entries(
       visuals
     ).forEach(
@@ -117,7 +194,28 @@ export function createDetailVisuals(
           key === id
       }
     )
+
+    applyResponsiveTransform(
+      id
+    )
   }
+
+  // ==================================================
+  // HANDLE RESIZE / ROTATION
+  // ==================================================
+
+  window.addEventListener(
+    'resize',
+    () => {
+      if (
+        activeDestination
+      ) {
+        applyResponsiveTransform(
+          activeDestination
+        )
+      }
+    }
+  )
 
   // ==================================================
   // UPDATE
@@ -133,7 +231,7 @@ export function createDetailVisuals(
     )
 
     hyades.update(
-        elapsed,
+      elapsed,
       delta
     )
 
@@ -143,6 +241,7 @@ export function createDetailVisuals(
     )
 
     crab.update(
+      elapsed,
       delta
     )
   }
